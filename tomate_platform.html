@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToMaTe Platform - Nền tảng Quản lý & Học tập</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tomate: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                            700: '#be123c',
+                            800: '#9f1239',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Custom Scrollbars & Animations */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen flex flex-col md:flex-row">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-full md:w-64 bg-slate-900 text-white flex-shrink-0 flex flex-col justify-between">
+        <div>
+            <!-- Brand Logo -->
+            <div class="p-6 flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-tomate-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-tomate-600/40">
+                        <i class="fa-solid font-bold text-white">🍅</i>
+                    </div>
+                    <span class="text-xl font-bold tracking-tight text-white">ToMaTe</span>
+                </div>
+                <span class="text-xs px-2 py-0.5 rounded bg-tomate-500/20 text-tomate-400 font-medium border border-tomate-500/30">v2.4</span>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="p-4 space-y-1">
+                <a href="#dashboard" onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg bg-tomate-600 text-white font-medium transition-all">
+                    <i class="fa-solid fa-chart-pie w-5"></i>
+                    <span>Tổng quan</span>
+                </a>
+                <a href="#courses" onclick="switchTab('courses')" id="nav-courses" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white font-medium transition-all">
+                    <i class="fa-solid fa-book-open w-5"></i>
+                    <span>Khóa học</span>
+                </a>
+                <a href="#pomodoro" onclick="switchTab('pomodoro')" id="nav-pomodoro" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white font-medium transition-all">
+                    <i class="fa-solid fa-stopwatch w-5"></i>
+                    <span>Đồng hồ Pomodoro</span>
+                </a>
+                <a href="#tasks" onclick="switchTab('tasks')" id="nav-tasks" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white font-medium transition-all">
+                    <i class="fa-solid fa-list-check w-5"></i>
+                    <span>Nhiệm vụ</span>
+                </a>
+                <a href="#community" onclick="switchTab('community')" id="nav-community" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white font-medium transition-all">
+                    <i class="fa-solid fa-users w-5"></i>
+                    <span>Cộng đồng</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- User Profile Summary at Sidebar Footer -->
+        <div class="p-4 border-t border-slate-800 flex items-center space-x-3">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" class="w-10 h-10 rounded-full object-cover border-2 border-tomate-500" alt="Avatar">
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-white truncate">Minh Anh</p>
+                <p class="text-xs text-slate-400 truncate">minhanh@tomate.edu.vn</p>
+            </div>
+            <button class="text-slate-400 hover:text-white p-1" title="Cài đặt">
+                <i class="fa-solid fa-gear"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 flex flex-col overflow-y-auto">
+        <!-- Top Navigation Header -->
+        <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+            <div class="flex items-center space-x-4">
+                <div class="relative w-64 md:w-80">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" placeholder="Tìm kiếm khóa học, bài tập..." class="w-full pl-9 pr-4 py-2 bg-slate-100 border border-transparent rounded-lg text-sm focus:outline-none focus:bg-white focus:border-tomate-500 transition-all">
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button class="relative p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-full">
+                    <i class="fa-regular fa-bell text-lg"></i>
+                    <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-tomate-500 rounded-full ring-2 ring-white"></span>
+                </button>
+                <button onclick="openModal('newTaskModal')" class="bg-tomate-600 hover:bg-tomate-700 text-white text-sm font-medium px-4 py-2 rounded-lg flex items-center space-x-2 shadow-md shadow-tomate-600/20 transition-all">
+                    <i class="fa-solid fa-plus"></i>
+                    <span class="hidden sm:inline">Thêm nhiệm vụ</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Dashboard Section -->
+        <section id="view-dashboard" class="p-6 space-y-6">
+            <!-- Header Banner -->
+            <div class="bg-gradient-to-r from-tomate-600 to-rose-700 text-white rounded-2xl p-6 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="space-y-2">
+                    <h1 class="text-2xl md:text-3xl font-bold">Chào mừng trở lại, Minh Anh! 👋</h1>
+                    <p class="text-rose-100 text-sm md:text-base max-w-xl">Hôm nay bạn đã hoàn thành 4/5 mục tiêu tập trung. Hãy giữ vững phong độ nhé!</p>
+                </div>
+                <div class="flex items-center bg-white/10 backdrop-blur-md px-5 py-3 rounded-xl border border-white/20 space-x-4">
+                    <div class="text-center">
+                        <span class="text-2xl font-bold block">12</span>
+                        <span class="text-xs text-rose-200 uppercase tracking-wider">Chuỗi ngày</span>
+                    </div>
+                    <div class="h-8 w-px bg-white/20"></div>
+                    <div class="text-center">
+                        <span class="text-2xl font-bold block">4.8h</span>
+                        <span class="text-xs text-rose-200 uppercase tracking-wider">Tập trung</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Overview Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Khóa học đang học</p>
+                        <h3 class="text-2xl font-bold text-slate-800 mt-1">4 Khóa</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-book"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Nhiệm vụ hôm nay</p>
+                        <h3 class="text-2xl font-bold text-slate-800 mt-1">8 / 10</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Phiên Pomodoro</p>
+                        <h3 class="text-2xl font-bold text-slate-800 mt-1">14 Phiên</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-tomate-50 text-tomate-600 rounded-xl flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Điểm tích lũy</p>
+                        <h3 class="text-2xl font-bold text-slate-800 mt-1">1,250 XP</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Charts and Recent Activity -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Analytics Chart -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-bold text-slate-800">Thời gian học tập tuần này</h2>
+                        <select class="bg-slate-50 border border-slate-200 text-xs rounded-lg p-2 focus:outline-none">
+                            <option>7 ngày qua</option>
+                            <option>Tháng này</option>
+                        </select>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="weeklyChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Active Tasks Quick List -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800 mb-4">Nhiệm vụ ưu tiên</h2>
+                        <div class="space-y-3" id="quickTaskList">
+                            <!-- Items injected dynamically -->
+                        </div>
+                    </div>
+                    <button onclick="switchTab('tasks')" class="w-full mt-4 text-center text-sm font-medium text-tomate-600 hover:text-tomate-700 py-2 bg-tomate-50 rounded-lg transition-colors">
+                        Xem tất cả nhiệm vụ →
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Courses Section -->
+        <section id="view-courses" class="p-6 space-y-6 hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-800">Khóa học của tôi</h1>
+                    <p class="text-sm text-slate-500">Tiếp tục hành trình nâng cao kiến thức học thuật và kỹ năng</p>
+                </div>
+                <div class="flex gap-2">
+                    <button class="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium hover:bg-slate-800 transition-all">
+                        Khám phá khóa học mới
+                    </button>
+                </div>
+            </div>
+
+            <!-- Course Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Course Card 1 -->
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                    <div class="h-40 bg-slate-200 relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500&auto=format&fit=crop&q=80" class="w-full h-full object-cover" alt="Course Thumbnail">
+                        <span class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded-full">Lập trình</span>
+                    </div>
+                    <div class="p-5 space-y-4">
+                        <h3 class="font-bold text-lg text-slate-800 line-clamp-1">JavaScript & React Chuyên Sâu</h3>
+                        <p class="text-xs text-slate-500 line-clamp-2">Làm chủ React 18, Custom Hooks, Redux Toolkit và tối ưu hóa hiệu năng ứng dụng Web.</p>
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between text-xs font-medium">
+                                <span class="text-slate-500">Tiến độ</span>
+                                <span class="text-tomate-600">75%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2">
+                                <div class="bg-tomate-600 h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <button class="w-full py-2 bg-slate-100 hover:bg-tomate-600 hover:text-white text-slate-700 font-medium rounded-lg text-sm transition-all flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-play text-xs"></i>
+                            <span>Tiếp tục học</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Course Card 2 -->
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                    <div class="h-40 bg-slate-200 relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&auto=format&fit=crop&q=80" class="w-full h-full object-cover" alt="Course Thumbnail">
+                        <span class="absolute top-3 right-3 bg-emerald-600 text-white text-xs font-bold px-2.5 py-1 rounded-full">Dữ liệu</span>
+                    </div>
+                    <div class="p-5 space-y-4">
+                        <h3 class="font-bold text-lg text-slate-800 line-clamp-1">Phân Tích Dữ Liệu Với Python</h3>
+                        <p class="text-xs text-slate-500 line-clamp-2">Sử dụng Pandas, NumPy và Matplotlib để trực quan hóa và khai phá dữ liệu lớn.</p>
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between text-xs font-medium">
+                                <span class="text-slate-500">Tiến độ</span>
+                                <span class="text-tomate-600">40%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2">
+                                <div class="bg-tomate-600 h-2 rounded-full" style="width: 40%"></div>
+                            </div>
+                        </div>
+                        <button class="w-full py-2 bg-slate-100 hover:bg-tomate-600 hover:text-white text-slate-700 font-medium rounded-lg text-sm transition-all flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-play text-xs"></i>
+                            <span>Tiếp tục học</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Course Card 3 -->
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                    <div class="h-40 bg-slate-200 relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=500&auto=format&fit=crop&q=80" class="w-full h-full object-cover" alt="Course Thumbnail">
+                        <span class="absolute top-3 right-3 bg-purple-600 text-white text-xs font-bold px-2.5 py-1 rounded-full">Thiết kế</span>
+                    </div>
+                    <div class="p-5 space-y-4">
+                        <h3 class="font-bold text-lg text-slate-800 line-clamp-1">UI/UX Design Standard 2026</h3>
+                        <p class="text-xs text-slate-500 line-clamp-2">Quy trình thiết kế giao diện người dùng chuyên nghiệp từ Figma đến Prototype.</p>
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between text-xs font-medium">
+                                <span class="text-slate-500">Tiến độ</span>
+                                <span class="text-tomate-600">90%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2">
+                                <div class="bg-tomate-600 h-2 rounded-full" style="width: 90%"></div>
+                            </div>
+                        </div>
+                        <button class="w-full py-2 bg-slate-100 hover:bg-tomate-600 hover:text-white text-slate-700 font-medium rounded-lg text-sm transition-all flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-play text-xs"></i>
+                            <span>Tiếp tục học</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pomodoro Timer Section -->
+        <section id="view-pomodoro" class="p-6 max-w-4xl mx-auto w-full space-y-8 hidden">
+            <div class="text-center space-y-2">
+                <h1 class="text-3xl font-bold text-slate-800">Đồng hồ Tập trung Pomodoro</h1>
+                <p class="text-slate-500">Tối ưu hiệu suất làm việc bằng phương pháp tập trung ngắt quãng</p>
+            </div>
+
+            <!-- Timer Widget Wrapper -->
+            <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-xl text-center space-y-8 relative overflow-hidden">
+                <!-- Modes selector -->
+                <div class="inline-flex bg-slate-100 p-1.5 rounded-2xl space-x-2">
+                    <button onclick="setTimerMode(25, 'work')" id="mode-work" class="px-5 py-2 rounded-xl text-sm font-semibold bg-white text-tomate-600 shadow-sm transition-all">Làm việc (25m)</button>
+                    <button onclick="setTimerMode(5, 'short')" id="mode-short" class="px-5 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all">Nghỉ ngắn (5m)</button>
+                    <button onclick="setTimerMode(15, 'long')" id="mode-long" class="px-5 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all">Nghỉ dài (15m)</button>
+                </div>
+
+                <!-- Clock Display -->
+                <div class="relative w-64 h-64 mx-auto flex items-center justify-center">
+                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="42" stroke="currentColor" stroke-width="6" class="text-slate-100" fill="transparent" />
+                        <circle id="timerProgress" cx="50" cy="50" r="42" stroke="currentColor" stroke-width="6" class="text-tomate-600 transition-all duration-1000" fill="transparent" stroke-dasharray="264" stroke-dashoffset="0" stroke-linecap="round" />
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span id="timerDisplay" class="text-6xl font-bold tracking-tight text-slate-800">25:00</span>
+                        <span id="timerStatus" class="text-xs uppercase font-bold text-tomate-500 tracking-wider mt-2">Sẵn sàng</span>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="flex items-center justify-center space-x-4">
+                    <button id="startTimerBtn" onclick="toggleTimer()" class="w-36 py-3.5 bg-tomate-600 hover:bg-tomate-700 text-white font-bold rounded-2xl shadow-lg shadow-tomate-600/30 transition-all flex items-center justify-center space-x-2">
+                        <i id="timerIcon" class="fa-solid fa-play"></i>
+                        <span id="timerBtnText">Bắt đầu</span>
+                    </button>
+                    <button onclick="resetTimer()" class="p-3.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl transition-all" title="Đặt lại">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tasks Section -->
+        <section id="view-tasks" class="p-6 space-y-6 hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-800">Danh sách nhiệm vụ</h1>
+                    <p class="text-sm text-slate-500">Quản lý và theo dõi các mục tiêu học tập hàng ngày</p>
+                </div>
+                <button onclick="openModal('newTaskModal')" class="bg-tomate-600 hover:bg-tomate-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-all flex items-center space-x-2">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Tạo công việc mới</span>
+                </button>
+            </div>
+
+            <!-- Tasks Container -->
+            <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                <div class="p-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+                    <span class="text-sm font-bold text-slate-700 uppercase tracking-wider">Tất cả nhiệm vụ</span>
+                    <span class="text-xs bg-slate-200 text-slate-700 px-2.5 py-1 rounded-full font-semibold" id="taskCount">3 Công việc</span>
+                </div>
+                <div class="divide-y divide-slate-100" id="fullTaskList">
+                    <!-- Tasks will be populated dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Community Section -->
+        <section id="view-community" class="p-6 space-y-6 hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-800">Cộng đồng Học tập</h1>
+                    <p class="text-sm text-slate-500">Trao đổi kiến thức, chia sẻ tài liệu cùng bạn học</p>
+                </div>
+            </div>
+            
+            <div class="bg-white p-8 rounded-xl border border-slate-200 text-center space-y-4">
+                <div class="w-16 h-16 bg-tomate-50 text-tomate-600 rounded-full flex items-center justify-center mx-auto text-2xl">
+                    <i class="fa-solid fa-comments"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800">Diễn đàn trao đổi sinh viên</h3>
+                <p class="text-slate-500 max-w-md mx-auto text-sm">Tính năng thảo luận nhóm và học chung đang được hoàn thiện. Hãy quay lại sau nhé!</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal: Add New Task -->
+    <div id="newTaskModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-5 m-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-lg font-bold text-slate-800">Thêm nhiệm vụ mới</h3>
+                <button onclick="closeModal('newTaskModal')" class="text-slate-400 hover:text-slate-600 p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <form id="addTaskForm" onsubmit="handleAddTask(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Tên nhiệm vụ</label>
+                    <input type="text" id="taskTitle" required placeholder="Ví dụ: Ôn tập môn Giải tích 1" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-tomate-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Độ ưu tiên</label>
+                    <select id="taskPriority" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-tomate-500">
+                        <option value="Cao">Cao</option>
+                        <option value="Trung bình" selected>Trung bình</option>
+                        <option value="Thấp">Thấp</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-3 pt-3">
+                    <button type="button" onclick="closeModal('newTaskModal')" class="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg">Hủy</button>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium bg-tomate-600 hover:bg-tomate-700 text-white rounded-lg shadow-sm">Tạo mới</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // State Management
+        let tasks = [
+            { id: 1, title: 'Hoàn thành bài tập React Hooks', completed: false, priority: 'Cao' },
+            { id: 2, title: 'Đọc chương 3 sách Python Data Science', completed: true, priority: 'Trung bình' },
+            { id: 3, title: 'Ôn tập từ vựng IELTS Topic Education', completed: false, priority: 'Thấp' }
+        ];
+
+        let timerState = {
+            minutes: 25,
+            seconds: 0,
+            totalSeconds: 25 * 60,
+            initialSeconds: 25 * 60,
+            isRunning: false,
+            interval: null,
+            mode: 'work'
+        };
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            const views = ['dashboard', 'courses', 'pomodoro', 'tasks', 'community'];
+            views.forEach(v => {
+                const el = document.getElementById(`view-${v}`);
+                const nav = document.getElementById(`nav-${v}`);
+                if (v === tabId) {
+                    el.classList.remove('hidden');
+                    nav.classList.add('bg-tomate-600', 'text-white');
+                    nav.classList.remove('text-slate-400');
+                } else {
+                    el.classList.add('hidden');
+                    nav.classList.remove('bg-tomate-600', 'text-white');
+                    nav.classList.add('text-slate-400');
+                }
+            });
+        }
+
+        // Render Tasks Lists
+        function renderTasks() {
+            const quickList = document.getElementById('quickTaskList');
+            const fullList = document.getElementById('fullTaskList');
+            const countEl = document.getElementById('taskCount');
+
+            if (countEl) countEl.innerText = `${tasks.length} Công việc`;
+
+            // Quick List (Dashboard)
+            quickList.innerHTML = tasks.slice(0, 3).map(task => `
+                <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg border border-slate-100">
+                    <div class="flex items-center space-x-3">
+                        <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${task.id})" class="accent-tomate-600 rounded w-4 h-4">
+                        <span class="text-sm font-medium ${task.completed ? 'line-through text-slate-400' : 'text-slate-700'}">${task.title}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            // Full List (Tasks Tab)
+            fullList.innerHTML = tasks.map(task => `
+                <div class="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                    <div class="flex items-center space-x-3">
+                        <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${task.id})" class="accent-tomate-600 rounded w-4 h-4 cursor-pointer">
+                        <span class="text-sm font-medium ${task.completed ? 'line-through text-slate-400' : 'text-slate-800'}">${task.title}</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span class="text-xs px-2.5 py-1 rounded-full font-semibold ${
+                            task.priority === 'Cao' ? 'bg-rose-100 text-rose-700' :
+                            task.priority === 'Trung bình' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'
+                        }">${task.priority}</span>
+                        <button onclick="deleteTask(${task.id})" class="text-slate-400 hover:text-rose-600 text-sm p-1">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleTask(id) {
+            tasks = tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
+            renderTasks();
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            renderTasks();
+        }
+
+        function handleAddTask(e) {
+            e.preventDefault();
+            const title = document.getElementById('taskTitle').value;
+            const priority = document.getElementById('taskPriority').value;
+            tasks.unshift({ id: Date.now(), title, completed: false, priority });
+            renderTasks();
+            closeModal('newTaskModal');
+            document.getElementById('addTaskForm').reset();
+        }
+
+        // Pomodoro Timer Logic
+        function updateTimerUI() {
+            const display = document.getElementById('timerDisplay');
+            const progress = document.getElementById('timerProgress');
+            const mins = String(Math.floor(timerState.totalSeconds / 60)).padStart(2, '0');
+            const secs = String(timerState.totalSeconds % 60).padStart(2, '0');
+            display.innerText = `${mins}:${secs}`;
+
+            // Circle Progress Bar Offset (Circumference ~264)
+            const circumference = 264;
+            const offset = circumference - (timerState.totalSeconds / timerState.initialSeconds) * circumference;
+            progress.style.strokeDashoffset = offset;
+        }
+
+        function setTimerMode(mins, mode) {
+            clearInterval(timerState.interval);
+            timerState.isRunning = false;
+            timerState.initialSeconds = mins * 60;
+            timerState.totalSeconds = mins * 60;
+            timerState.mode = mode;
+
+            document.getElementById('timerBtnText').innerText = 'Bắt đầu';
+            document.getElementById('timerIcon').className = 'fa-solid fa-play';
+            document.getElementById('timerStatus').innerText = mode === 'work' ? 'Sẵn sàng tập trung' : 'Thời gian nghỉ ngơi';
+
+            // Active button styles
+            ['work', 'short', 'long'].forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if (m === mode) {
+                    btn.className = 'px-5 py-2 rounded-xl text-sm font-semibold bg-white text-tomate-600 shadow-sm transition-all';
+                } else {
+                    btn.className = 'px-5 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:text-slate-900 transition-all';
+                }
+            });
+
+            updateTimerUI();
+        }
+
+        function toggleTimer() {
+            if (timerState.isRunning) {
+                clearInterval(timerState.interval);
+                timerState.isRunning = false;
+                document.getElementById('timerBtnText').innerText = 'Tiếp tục';
+                document.getElementById('timerIcon').className = 'fa-solid fa-play';
+                document.getElementById('timerStatus').innerText = 'Đang tạm dừng';
+            } else {
+                timerState.isRunning = true;
+                document.getElementById('timerBtnText').innerText = 'Tạm dừng';
+                document.getElementById('timerIcon').className = 'fa-solid fa-pause';
+                document.getElementById('timerStatus').innerText = 'Đang tập trung...';
+
+                timerState.interval = setInterval(() => {
+                    if (timerState.totalSeconds > 0) {
+                        timerState.totalSeconds--;
+                        updateTimerUI();
+                    } else {
+                        clearInterval(timerState.interval);
+                        timerState.isRunning = false;
+                        document.getElementById('timerStatus').innerText = 'Hoàn thành phiên!';
+                        alert('Đã hết thời gian phiên Pomodoro!');
+                    }
+                }, 1000);
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerState.interval);
+            timerState.isRunning = false;
+            timerState.totalSeconds = timerState.initialSeconds;
+            document.getElementById('timerBtnText').innerText = 'Bắt đầu';
+            document.getElementById('timerIcon').className = 'fa-solid fa-play';
+            document.getElementById('timerStatus').innerText = 'Sẵn sàng';
+            updateTimerUI();
+        }
+
+        // Modal Controls
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        window.onload = function() {
+            renderTasks();
+            updateTimerUI();
+
+            // Chart.js Configuration
+            const ctx = document.getElementById('weeklyChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
+                    datasets: [{
+                        label: 'Giờ học (giờ)',
+                        data: [2.5, 4, 3, 5, 4.8, 6, 2],
+                        backgroundColor: '#f43f5e',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        };
+    </script>
+</body>
+</html>
